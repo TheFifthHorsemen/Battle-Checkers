@@ -12,8 +12,17 @@ public class Checker {
 	
 	// A list of all possible jumps for the currently selected checker. Modified by .getPossibleJumps
 	public static ArrayList<int[][]> jumpList = new ArrayList<int[][]>(); 
+	public static ArrayList<int[][]> specialJumps = new ArrayList<int[][]>();
 	
-	//Class definition for Checker
+	/**
+	 * Class definition for Checker
+	 * @param Color
+	 * @param X
+	 * @param Y
+	 * @param Role
+	 * @param IsKing
+	 * @param PowerUp
+	 */
 	public Checker(int Color, int X, int Y, int Role, boolean IsKing, int PowerUp) {
 		this.color = Color;
 		this.x = X;
@@ -23,12 +32,20 @@ public class Checker {
 		this.powerUp = PowerUp;
 	}
 	
-	//Used for creating checker, creates a checker that isn't a king and has no power up 
+	/**
+	 * Used for creating checker, creates a checker that isn't a king and has no power up 
+	 * @param Color
+	 * @param X
+	 * @param Y
+	 * @param Role
+	 */
 	public Checker(int Color, int X, int Y, int Role){
 		this(Color, X, Y, Role, false, PowerUp.NONE);
 	}
 	
-	//Function called when the checker has been jumped and needs to be checked if it will be removed
+	/**
+	 * Function called when the checker has been jumped and needs to be checked if it will be removed
+	 */
 	public void jump(){
 		
 		
@@ -51,7 +68,161 @@ public class Checker {
 		}		
 	}
 	
-	//Adds a possible jump position to jumpList. Called by getPossibleJumps
+	/**
+	 * Function called when user wants to use the selected checkers powerUp
+	 */
+	public void activatePowerUp(){
+		switch (powerUp) {
+			/*PowerUp Jump - Adds jump as if it jumped over a checker when it didn't
+			 * 
+			 * 	X 0 0 0 X
+			 *  0 0 0 0 0
+			 *  0 0 @ 0 0
+			 *  0 0 0 0 0
+			 *  X 0 0 0 X
+			 */
+			case PowerUp.JUMP:	
+				jumpList.clear();
+								
+				if (BattleCheckers.doesPositionExist(x-2, y-2) && (color == BattleCheckers.BLACK || isKing))
+					addJump(x-2, y-2, true, false);
+					
+				if (BattleCheckers.doesPositionExist(x-2, y+2) && (color == BattleCheckers.BLACK || isKing))
+					addJump(x-2, y+2, true, false);
+								
+				if (BattleCheckers.doesPositionExist(x+2, y+2)&& (color == BattleCheckers.WHITE || isKing))
+					addJump(x+2, y+2, true, false);
+						
+				if (BattleCheckers.doesPositionExist(x+2, y-2) && (color == BattleCheckers.WHITE || isKing))
+					addJump(x+2, y-2, true, false);
+								
+				break;
+							
+			/* PowerUp Special - Adds special jump according to the checker's Role
+			 * 
+			 */
+			case PowerUp.SPECIAL:	
+				switch (role) {
+				
+					/* Attacks all checkers in a 1 tile radius
+					 * 	X X X
+					 *  X @ X
+					 *  X X X 
+					 */
+					case BattleCheckers.SHORTRANGE:
+						
+						//TODO: REVISE?
+						jumpList.clear();
+						
+						/*	Adds attack spots
+						 * 	X 0 X
+						 *  X 0 X
+						 *  X 0 X
+						 */
+						for (int i = -1; i<2; i+=2) {
+							for (int j = -1; i<2; i++){
+								
+								//Maybe revise this?
+								if (BattleCheckers.doesPositionExist(x+i, y+j))
+									specialJumps.add(new int[x+i][y+j]);
+							}
+						}
+						
+						//Adds the remaining two attack spots
+						if (BattleCheckers.doesPositionExist(x, y+1))
+							specialJumps.add(new int[x][y+1]);
+						
+						if (BattleCheckers.doesPositionExist(x, y-1))
+							specialJumps.add(new int[x][y-1]);
+						
+						break;
+						
+					case BattleCheckers.MEDIUMRANGE:
+						/*
+						 * 	0 0 X 0 0
+						 *  0 0 X 0 0
+						 *  X X @ X X
+						 *  0 0 X 0 0 
+						 *  0 0 X 0 0
+						 */
+						for (int i = -2; i<3; i++)
+							if (i != 0)
+								if (BattleCheckers.doesPositionExist(x+i, y))
+									specialJumps.add(new int[x+i][y]);
+						
+						for (int i = -2; i<3; i++)
+							if (i != 0)
+								if (BattleCheckers.doesPositionExist(x, y+i))
+									specialJumps.add(new int[x][y+i]);
+						
+						break;
+						
+					case BattleCheckers.LONGRANGE:	//Adds all enemy checkers to possible attacks
+						if(color == BattleCheckers.BLACK){
+							for (Checker C : BattleCheckers.whiteCheckers){
+								if (C.getX()<=x || isKing)
+									specialJumps.add(new int[C.getX()][C.getY()]);
+							}
+						} else {
+							for (Checker C : BattleCheckers.blackCheckers){
+								if(C.getX()>=x || isKing)
+									specialJumps.add(new int[C.getX()][C.getY()]);
+							}
+						}
+						break;
+					}
+						
+				break;
+									
+			case PowerUp.STEALTH:  
+				jumpList.clear();
+				
+				moveInOutStealth();
+				
+				break;
+						
+			case PowerUp.INSTEALTH:
+				jumpList.clear();
+				
+				moveInOutStealth();
+				
+				break;
+								
+			}
+		
+	}
+	
+	/**
+	 * Movements for getting in out of stealth
+	 */
+	private void moveInOutStealth(){
+		
+		/*
+		 * 0 X 0
+		 * X @ X
+		 * 0 X 0
+		 */ 
+		
+		if (BattleCheckers.doesPositionExist(x-1, y) && (color == BattleCheckers.BLACK || isKing))
+			addJump(x-1, y, true, false);
+		
+		if (BattleCheckers.doesPositionExist(x+1, y)&& (color == BattleCheckers.WHITE || isKing))
+			addJump(x+1, y, true, false);
+		
+		if (BattleCheckers.doesPositionExist(x, y+1))
+			addJump(x, y+1, true, false);
+						
+		if (BattleCheckers.doesPositionExist(x, y-1))
+			addJump(x, y-1, true, false);
+	}
+	
+	/**
+	 * Adds a possible jump position to jumpList. Called by getPossibleJumps
+	 * @param X
+	 * @param Y
+	 * @param calledFromJump
+	 * @param isDoubleJump
+	 */
 	private void addJump(int X, int Y, boolean calledFromJump, boolean isDoubleJump)
 	{
 		int tileValue = BattleCheckers.getValAtBoard(X, Y);	//Grabs the value of the tile at the prescribed position from the board
@@ -70,7 +241,11 @@ public class Checker {
 		}
 	}
 	
-	//Moves checker to a new position, checking if a jump was made in the process
+	/**
+	 * Moves checker to a new position, checking if a jump was made in the process
+	 * @param newX
+	 * @param newY
+	 */
 	public void setPos(int newX, int newY)
 	{
 		int oldX = x;				//Starting coordinates
@@ -113,7 +288,11 @@ public class Checker {
 		
 	}
 	
-	//Used to find if a checker can move to a tile
+	/**
+	 * Used to find if a checker can move to a tile
+	 * @param calledFromJump
+	 * @param isDoubleJump
+	 */
 	public void getPossibleJumps(boolean calledFromJump, boolean isDoubleJump){
 		
 		//Clears list if not finding tiles from jumping checkers
@@ -122,47 +301,71 @@ public class Checker {
 		
 		//Checks if positions exist
 		
-		if (x>0 && y>0 && (color == BattleCheckers.BLACK || isKing))
+		if (BattleCheckers.doesPositionExist(x-1, y-1) && (color == BattleCheckers.BLACK || isKing))
 			addJump(x-1, y-1, calledFromJump, isDoubleJump);
 		
-		if (x>0 && y<BattleCheckers.BOARDHEIGHT-1 && (color == BattleCheckers.BLACK || isKing))
+		if (BattleCheckers.doesPositionExist(x-1, y+1) && (color == BattleCheckers.BLACK || isKing))
 			addJump(x-1, y+1, calledFromJump, isDoubleJump);
 		
-		if (x<BattleCheckers.BOARDWIDTH-1 && y<BattleCheckers.BOARDHEIGHT-1 && (color == BattleCheckers.WHITE || isKing))
+		if (BattleCheckers.doesPositionExist(x+1, y+1)&& (color == BattleCheckers.WHITE || isKing))
 			addJump(x+1, y+1, calledFromJump, isDoubleJump);
 		
-		if (x<BattleCheckers.BOARDWIDTH-1 && y>0 && (color == BattleCheckers.WHITE || isKing))
+		if (BattleCheckers.doesPositionExist(x+1, y-1) && (color == BattleCheckers.WHITE || isKing))
 			addJump(x+1, y-1, calledFromJump, isDoubleJump);
 		
 	}
 	
-	//Used when first checking for movements
+	/**
+	 * Used when first checking for movements
+	 */
 	public void getPossibleJumps(){
 		getPossibleJumps(false, false);
 	}
 	
-	//Returns defined values of checker
-
+	/** 
+	 * Gets if the checker is a king
+	 * @return
+	 */
 	public boolean getIsKing() {
 		return isKing;
 	}
 	
+	/**
+	 * Gets checker's X coordinate
+	 * @return
+	 */
 	public int getX() {
 		return x;
 	}
 	
+	/**
+	 * Gets checker's Y coordinate
+	 * @return
+	 */
 	public int getY() {
 		return y;
 	}
 	
+	/**
+	 * Gets checker's color (WHITE or BLACK)
+	 * @return
+	 */
 	public int getColor() {
 		return color;
 	}
 	
+	/**
+	 * Gets checker's role. Used for Special PowerUp
+	 * @return
+	 */
 	public int getRole() {
 		return role;
 	}
 	
+	/**
+	 * Gets checker's PowerUp. Use PowerUp constants to evaluate
+	 * @return
+	 */
 	public int getPowerUp() {
 		return powerUp;
 	}
