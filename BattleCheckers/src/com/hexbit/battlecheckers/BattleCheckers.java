@@ -29,7 +29,7 @@ public class BattleCheckers {
 	//Int matrix for board. Defined as (Y, X) 
 	public static int [][] board = new int[BOARDHEIGHT][BOARDWIDTH];
 	
-	/**		
+	/*		
 	 * [y][x]
 	 * 	0 0 0 0 0 0 0 0 0 0 0
 	 * 	0 0 0 0 0 0 0 0 0 0 0
@@ -49,10 +49,12 @@ public class BattleCheckers {
 	public static void main(String[] args) {
 		
 		PowerUp.spawnPowerUp(2);
-
+		
 	}
 	
-	
+	/** 
+	 * Changes the turn for the game
+	 */
 	public static void changeTurn() {
 		int rand;
 		
@@ -76,7 +78,11 @@ public class BattleCheckers {
 	}
 	
 	
-	//Creates array of checkers and moves to starting position
+	/**
+	 * Creates array of checkers and moves to starting position
+	 * @param isWhite
+	 * @return
+	 */
 	public static Checker[] initCheckers(boolean isWhite)
 	{
 		Checker[] checkers = new Checker[12]; //Creates empty array
@@ -108,7 +114,26 @@ public class BattleCheckers {
 		
 	}
 	
-	//Returns the checker that is at the given position
+	/**
+	 * Returns true of the coordinate exists on the board
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean doesPositionExist(int x, int y){
+		if ((x>-1 && x<BOARDWIDTH) && (y>-1 && y<BOARDHEIGHT))
+			return true;
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Returns the checker that is at the given position
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public Checker getCheckerFromBoard(int x, int y){
 		int checkerID = board[y][x];
 		if (checkerID>12)
@@ -117,12 +142,22 @@ public class BattleCheckers {
 		
 	}
 	
-	//Returns what is occupying given position (0 = empty, -1 = PowerUp, 1-12 = White Checker, 13-24 = Black Checker) 
+	/**
+	 * Returns what is occupying given position (0 = empty, -1 = PowerUp, 1-12 = White Checker, 13-24 = Black Checker) 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public static int getValAtBoard(int x, int y){
 		return board[y][x];
 	}
 	
-	//Sets the value of the board at specified position
+	/**
+	 * Sets the value of the board at specified position
+	 * @param x
+	 * @param y
+	 * @param newVal
+	 */
 	public static void setValAtBoard(int x, int y, int newVal){
 		board[y][x] = newVal;
 	}

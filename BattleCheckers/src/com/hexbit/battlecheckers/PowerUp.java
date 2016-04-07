@@ -18,7 +18,12 @@ public class PowerUp {
 	// Coordinates of PowerUp and the type (Defined by constants)
 	private int x, y, type;
 	
-	// Class definition for PowerUp
+	/**
+	 *  Class definition for PowerUp
+	 * @param X
+	 * @param Y
+	 * @param Type
+	 */
 	public PowerUp(int X, int Y, int Type)
 	{
 		this.x = X;
@@ -33,17 +38,27 @@ public class PowerUp {
 		
 	}
 	
-	// Adds PowerUp with random type
+	/** 
+	 * Adds PowerUp with random type
+	 * @param X
+	 * @param Y
+	 */
 	public PowerUp(int X, int Y){
 		this(X, Y, (int)Math.random()*4+1);
 	}
 	
-	// Removes PowerUp from list
+	/**
+	 *  Removes PowerUp from list
+	 * @param index
+	 */
 	public static void removePowerUp(int index){
 		powerUpList.remove(index);
 	}
 	
-	// Adds a specified number of PowerUps to the board at random, unoccupied places
+	/**
+	 *  Adds a specified number of PowerUps to the board at random, unoccupied places
+	 * @param quantity
+	 */
 	public static void spawnPowerUp(int quantity){
 		for (int i = 0; i<quantity; i++)
 		{
@@ -60,7 +75,12 @@ public class PowerUp {
 		}
 	}
 	
-	//Goes through list of PowerUps and checks if one of them exists at the given coordinates
+	/**
+	 * Goes through list of PowerUps and checks if one of them exists at the given coordinates
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public static int getPowerUpIndex(int x, int y){
 		for(int i = 0; i < powerUpList.size(); i++){
 			if ((powerUpList.get(i).x) == x && (powerUpList.get(i).y == y))
@@ -70,16 +90,27 @@ public class PowerUp {
 		return -1;
 	}
 	
-	//Returns defined values of PowerUp
 	
+	/**
+	 * Gets PowerUp X coordinate
+	 * @return
+	 */
 	public int getX(){
 		return x;
 	}
 	
+	/**
+	 * Gets PowerUp Y coordinate
+	 * @return
+	 */
 	public int getY(){
 		return y;
 	}
 	
+	/**
+	 * Gets PowerUp Type
+	 * @return
+	 */
 	public int getType(){
 		return type;
 	}
