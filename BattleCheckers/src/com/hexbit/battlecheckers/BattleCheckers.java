@@ -3,6 +3,8 @@ package com.hexbit.battlecheckers;
 
 public class BattleCheckers {
 	
+	//Game Constants
+	
 	final static int BLACK = 1;
 	final static int WHITE = 2;
 	
@@ -13,14 +15,18 @@ public class BattleCheckers {
 	final static int BOARDHEIGHT = 9;
 	final static int BOARDWIDTH = 11;
 	
+	//Current turn (Uses color constants)
 	public static int turn = 0;
 	
+	//Each color's score
 	public static int blackScore = 0;
 	public static int whiteScore = 0;
 	
+	//Array of checkers per color
 	public static Checker[] whiteCheckers = initCheckers(true);
 	public static Checker[] blackCheckers = initCheckers(false);
 	
+	//Int matrix for board. Defined as (Y, X) 
 	public static int [][] board = new int[BOARDHEIGHT][BOARDWIDTH];
 	
 	/**		
@@ -46,15 +52,18 @@ public class BattleCheckers {
 
 	}
 	
+	
 	public static void changeTurn() {
 		int rand;
 		
+		//Flips turn
 		if(turn == BLACK) {
 			turn = WHITE;
 		} else {
 			turn = BLACK;
 		}
 		
+		//Adds 0-3 PowerUps
 		rand = (int)Math.random()*100+1;
 		if(rand > 95){
 			PowerUp.spawnPowerUp(3);
@@ -63,17 +72,16 @@ public class BattleCheckers {
 		} else if (rand > 60){
 			PowerUp.spawnPowerUp(1);
 		}
-		
-		
-		
+	
 	}
 	
 	
-	
+	//Creates array of checkers and moves to starting position
 	public static Checker[] initCheckers(boolean isWhite)
 	{
-		Checker[] checkers = new Checker[12];
+		Checker[] checkers = new Checker[12]; //Creates empty array
 		
+		//Sets Checker's starting position
 		for(int i = 0; i<checkers.length; i++)
 		{
 			int x, y;
@@ -87,7 +95,11 @@ public class BattleCheckers {
 				y = (i%9)*2+2;
 				x = ((isWhite) ? 2:BOARDWIDTH-3);
 			}
+			
+			//Adds checkers position to the board
 			setValAtBoard(x, y, (i+1) + ((isWhite) ? 0:12));
+			
+			//Creates checker with random type
 			checkers[i] = new Checker((isWhite) ? WHITE:BLACK, x, y, (int)(Math.random()*3)+1);
 			
 		}
@@ -96,6 +108,7 @@ public class BattleCheckers {
 		
 	}
 	
+	//Returns the checker that is at the given position
 	public Checker getCheckerFromBoard(int x, int y){
 		int checkerID = board[y][x];
 		if (checkerID>12)
@@ -104,10 +117,12 @@ public class BattleCheckers {
 		
 	}
 	
+	//Returns what is occupying given position (0 = empty, -1 = PowerUp, 1-12 = White Checker, 13-24 = Black Checker) 
 	public static int getValAtBoard(int x, int y){
 		return board[y][x];
 	}
 	
+	//Sets the value of the board at specified position
 	public static void setValAtBoard(int x, int y, int newVal){
 		board[y][x] = newVal;
 	}
