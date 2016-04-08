@@ -135,6 +135,7 @@ public class BattleCheckers {
 	 * @return
 	 */
 	public Checker getCheckerFromBoard(int x, int y){
+                //TODO - CAN CAUSE ERROR
 		int checkerID = board[y][x];
 		if (checkerID>12)
 			return blackCheckers[checkerID-13];
