@@ -42,13 +42,15 @@ public class PowerUp {
 	 * Adds PowerUp with random type
 	 * @param X
 	 * @param Y
+	 * 
+	 * @see PowerUp
 	 */
 	public PowerUp(int X, int Y){
 		this(X, Y, (int)Math.random()*4+1);
 	}
 	
 	/**
-	 *  Removes PowerUp from list
+	 * Removes PowerUp from list
 	 * @param index
 	 */
 	public static void removePowerUp(int index){
@@ -56,7 +58,7 @@ public class PowerUp {
 	}
 	
 	/**
-	 *  Adds a specified number of PowerUps to the board at random, unoccupied places
+	 * Adds a specified number of PowerUps to the board at random, unoccupied places
 	 * @param quantity
 	 */
 	public static void spawnPowerUp(int quantity){
@@ -79,7 +81,7 @@ public class PowerUp {
 	 * Goes through list of PowerUps and checks if one of them exists at the given coordinates
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return PowerUp Index
 	 */
 	public static int getPowerUpIndex(int x, int y){
 		for(int i = 0; i < powerUpList.size(); i++){
@@ -92,24 +94,24 @@ public class PowerUp {
 	
 	
 	/**
-	 * Gets PowerUp X coordinate
-	 * @return
+	 * 
+	 * @returns PowerUp X coordinate
 	 */
 	public int getX(){
 		return x;
 	}
 	
 	/**
-	 * Gets PowerUp Y coordinate
-	 * @return
+	 * 
+	 * @returns PowerUp Y coordinate
 	 */
 	public int getY(){
 		return y;
 	}
 	
 	/**
-	 * Gets PowerUp Type
-	 * @return
+	 * 
+	 * @returns PowerUp Type
 	 */
 	public int getType(){
 		return type;

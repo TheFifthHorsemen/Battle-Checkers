@@ -11,8 +11,8 @@ public class Checker {
 	private int powerUp;	//Checker's current power up
 	
 	// A list of all possible jumps for the currently selected checker. Modified by .getPossibleJumps
-	public static ArrayList<int[][]> jumpList = new ArrayList<int[][]>(); 
-	public static ArrayList<int[][]> specialJumps = new ArrayList<int[][]>();
+	public static ArrayList<int[]> jumpList = new ArrayList<int[]>(); 
+	public static ArrayList<int[]> specialJumps = new ArrayList<int[]>();
 	
 	/**
 	 * Class definition for Checker
@@ -38,6 +38,8 @@ public class Checker {
 	 * @param X
 	 * @param Y
 	 * @param Role
+	 * 
+	 * @see Checker
 	 */
 	public Checker(int Color, int X, int Y, int Role){
 		this(Color, X, Y, Role, false, PowerUp.NONE);
@@ -111,7 +113,7 @@ public class Checker {
 					 */
 					case BattleCheckers.SHORTRANGE:
 						
-						//TODO: REVISE?
+						
 						jumpList.clear();
 						
 						/*	Adds attack spots
@@ -122,18 +124,28 @@ public class Checker {
 						for (int i = -1; i<2; i+=2) {
 							for (int j = -1; i<2; i++){
 								
-								//Maybe revise this?
-								if (BattleCheckers.doesPositionExist(x+i, y+j))
-									specialJumps.add(new int[x+i][y+j]);
+								
+								if (BattleCheckers.doesPositionExist(x+i, y+j)){
+									 
+									 int[] pass = {x+i, y+j};
+									specialJumps.add(pass);
+								}
 							}
 						}
 						
 						//Adds the remaining two attack spots
 						if (BattleCheckers.doesPositionExist(x, y+1))
-							specialJumps.add(new int[x][y+1]);
+						{
+							int[] pass = {x, y+1};
+							specialJumps.add(pass);
+						}
 						
 						if (BattleCheckers.doesPositionExist(x, y-1))
-							specialJumps.add(new int[x][y-1]);
+						{
+							int[] pass = {x, y-1};
+							specialJumps.add(pass);
+						}
+							
 						
 						break;
 						
@@ -144,30 +156,50 @@ public class Checker {
 						 *  X X @ X X
 						 *  0 0 X 0 0 
 						 *  0 0 X 0 0
+						 *  
+						 *  Adds in order: South North West East
+						 *  
+						 *  DOES NOT CHECK IF 
 						 */
+						
+						
 						for (int i = -2; i<3; i++)
 							if (i != 0)
 								if (BattleCheckers.doesPositionExist(x+i, y))
-									specialJumps.add(new int[x+i][y]);
+								{
+									int[] pass = {x+i, y};
+									specialJumps.add(pass);
+								} else {
+									int[] pass = {-1, -1};
+									specialJumps.add(pass);
+								}
+									
 						
 						for (int i = -2; i<3; i++)
 							if (i != 0)
 								if (BattleCheckers.doesPositionExist(x, y+i))
-									specialJumps.add(new int[x][y+i]);
+								{
+									int[] pass = {x, y+i};
+									specialJumps.add(pass);
+								} else {
+									int[] pass = {-1, -1};
+									specialJumps.add(pass);
+								}
+									
 						
 						break;
 						
 					case BattleCheckers.LONGRANGE:	//Adds all enemy checkers to possible attacks
-						if(color == BattleCheckers.BLACK){
-							for (Checker C : BattleCheckers.whiteCheckers){
-								if (C.getX()<=x || isKing)
-									specialJumps.add(new int[C.getX()][C.getY()]);
+						boolean isBlack = (color == BattleCheckers.BLACK);
+						//Loops through opposite color array of checkers to the current checker
+						for (Checker C : (isBlack ? BattleCheckers.whiteCheckers : BattleCheckers.blackCheckers)){
+							//Selects the checkers in line or in front of the checker
+							if ((isBlack && C.getX()<=x) || (!isBlack && C.getX()>=x) || isKing)
+							{
+								int[] pass = {C.getX(), C.getY()};
+								specialJumps.add(pass);
 							}
-						} else {
-							for (Checker C : BattleCheckers.blackCheckers){
-								if(C.getX()>=x || isKing)
-									specialJumps.add(new int[C.getX()][C.getY()]);
-							}
+									
 						}
 						break;
 					}
@@ -175,15 +207,13 @@ public class Checker {
 				break;
 									
 			case PowerUp.STEALTH:  
-				jumpList.clear();
-				
+								
 				moveInOutStealth();
 				
 				break;
 						
 			case PowerUp.INSTEALTH:
-				jumpList.clear();
-				
+						
 				moveInOutStealth();
 				
 				break;
@@ -202,6 +232,7 @@ public class Checker {
 		 * X @ X
 		 * 0 X 0
 		 */ 
+		jumpList.clear();
 		
 		if (BattleCheckers.doesPositionExist(x-1, y) && (color == BattleCheckers.BLACK || isKing))
 			addJump(x-1, y, true, false);
@@ -228,8 +259,9 @@ public class Checker {
 		int tileValue = BattleCheckers.getValAtBoard(X, Y);	//Grabs the value of the tile at the prescribed position from the board
 		
 		//If the tile is empty and the function is not searching for possible double jumps it add the tile to list of possible jumps
-		if (tileValue == 0 && !isDoubleJump) {	
-			jumpList.add(new int [Y][X]);
+		if (tileValue == 0 && !isDoubleJump) {
+			int[] pass = {Y, X};
+			jumpList.add(pass);
 		}
 		else if (!calledFromJump) //Used to see if its possible to jump a checker
 		{
@@ -323,48 +355,47 @@ public class Checker {
 	}
 	
 	/** 
-	 * Gets if the checker is a king
-	 * @return
+	 * @returns If the checker is a king
 	 */
 	public boolean getIsKing() {
 		return isKing;
 	}
 	
 	/**
-	 * Gets checker's X coordinate
-	 * @return
+	 * @returns Checker's X coordinate
+	 * 
 	 */
 	public int getX() {
 		return x;
 	}
 	
 	/**
-	 * Gets checker's Y coordinate
-	 * @return
+	 * @returns Checker's Y coordinate
+	 * 
 	 */
 	public int getY() {
 		return y;
 	}
 	
 	/**
-	 * Gets checker's color (WHITE or BLACK)
-	 * @return
+	 * @returns Checker's color (WHITE or BLACK)
+	 * 
 	 */
 	public int getColor() {
 		return color;
 	}
 	
 	/**
-	 * Gets checker's role. Used for Special PowerUp
-	 * @return
+	 * @returns checker's role. Used for Special PowerUp
+	 * 
 	 */
 	public int getRole() {
 		return role;
 	}
 	
 	/**
-	 * Gets checker's PowerUp. Use PowerUp constants to evaluate
-	 * @return
+	 * @returns Checker's PowerUp. 
+	 * @see PowerUp Constants
 	 */
 	public int getPowerUp() {
 		return powerUp;

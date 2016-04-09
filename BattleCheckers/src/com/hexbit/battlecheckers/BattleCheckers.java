@@ -81,7 +81,7 @@ public class BattleCheckers {
 	/**
 	 * Creates array of checkers and moves to starting position
 	 * @param isWhite
-	 * @return
+	 * @return Array of Checkers
 	 */
 	public static Checker[] initCheckers(boolean isWhite)
 	{
@@ -115,10 +115,10 @@ public class BattleCheckers {
 	}
 	
 	/**
-	 * Returns true of the coordinate exists on the board
+	 * @Returns True if the coordinate exists on the board
 	 * @param x
 	 * @param y
-	 * @return
+	 * 
 	 */
 	public static boolean doesPositionExist(int x, int y){
 		if ((x>-1 && x<BOARDWIDTH) && (y>-1 && y<BOARDHEIGHT))
@@ -126,28 +126,65 @@ public class BattleCheckers {
 		return false;
 	}
 	
-	
-	
 	/**
-	 * Returns the checker that is at the given position
-	 * @param x
-	 * @param y
-	 * @return
+	 * Initiates a medium range special attack
+	 * Is dependent upon the direction the user decides to attack
+	 * @param Direction
 	 */
-	public Checker getCheckerFromBoard(int x, int y){
-                //TODO - CAN CAUSE ERROR
-		int checkerID = board[y][x];
-		if (checkerID>12)
-			return blackCheckers[checkerID-13];
-		return whiteCheckers[checkerID-1];
+	public static void attackMedium (int Direction)
+	{
+		int tempX, tempY;
+		/*
+		 * Selects the x and y of the specialJumps Array according to following list:
+		 * 
+		 * South 1
+		 * South 2
+		 * North 1
+		 * North 2
+		 * West 1
+		 * West 2
+		 * East 1
+		 * East 2
+		 */
 		
+		for (int i = 0; i<2; i++)
+		{
+			
+			
+			tempX = Checker.specialJumps.get(Direction*2 + i)[0];
+			tempY = Checker.specialJumps.get(Direction*2 + i)[1];
+			
+			if(tempX != -1 && tempY != -1)
+			{
+				if(getValAtBoard(tempX, tempY)>0)
+				{
+					getCheckerFromBoard(tempX, tempY).jump();
+				}
+			}
+		}
 	}
 	
 	/**
-	 * Returns what is occupying given position (0 = empty, -1 = PowerUp, 1-12 = White Checker, 13-24 = Black Checker) 
+	 * @Returns The checker that is at the given position
 	 * @param x
 	 * @param y
-	 * @return
+	 * 
+	 */
+	public static Checker getCheckerFromBoard(int x, int y){
+		int checkerID = board[y][x];
+		if (checkerID>12) {
+			return blackCheckers[checkerID-13];
+		} else if (checkerID>0) {
+			return whiteCheckers[checkerID-1];
+		}
+		return null;
+	}
+	
+	/**
+	 * @Returns What is occupying given position (0 = empty, -1 = PowerUp, 1-12 = White Checker, 13-24 = Black Checker) 
+	 * @param x
+	 * @param y
+	 * 
 	 */
 	public static int getValAtBoard(int x, int y){
 		return board[y][x];

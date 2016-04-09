@@ -11,6 +11,11 @@ public class GamePanel extends JPanel {
 	public static final int ROW_AMT = BattleCheckers.BOARDHEIGHT; //Is this bad?
 	public static final int COL_AMT = BattleCheckers.BOARDWIDTH;
 	
+	public static final int NORTH = 1;
+	public static final int EAST = 3;
+	public static final int SOUTH = 0;
+	public static final int WEST = 2;
+	
 	GamePanel() {
 		setPreferredSize(new Dimension(800,800)); //For now
 		setVisible(true);
